@@ -1,0 +1,262 @@
+1)hello world program
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+contract FirstContract{
+    string public greet="hello world";
+}
+
+
+2)Program to find Factorial of number via pure functions
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
+contract Factorial{
+    function Fact(uint num) public pure returns(uint){
+        uint fact=1;
+        for(uint i=num;i>=1;i--){
+        fact=fact*i;
+        }
+        return fact;
+    }
+    
+}
+
+
+6)threeandseven
+pragma solidity ^0.8.10;
+contract Threeandseven{
+    function check(uint num) public pure returns(bool){
+        if ((num % 3 == 0 || num % 7 == 0) && (num >10)){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+}
+7)EvenOdd
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+contract Evenandodd
+{
+    int num;
+    string num_type;
+    
+    function set(int n) public
+        {
+            if(n % 2 == 0)
+            {
+                num_type='even';
+            }
+                
+            else
+            {
+                num_type='odd';
+
+            } 
+        }
+            function get () public view returns(string memory)
+            {
+                return num_type;
+            }  
+}
+9)Program to find Sum of Digits
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+contract Add
+{
+   
+   function check(uint num)public pure returns(uint)
+   {
+       uint sum=0;
+       for(uint i=1;i>=num;i++)
+       {
+          sum = sum + i;
+       }
+       return sum;
+       
+   }
+}
+8)calculator
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+contract Calculator{
+    function View(uint a,uint b) public pure returns(uint){
+        uint c;
+        c=a+b;
+        return c;
+    }
+    function View_1(uint a,uint b) public pure returns(uint){
+        uint c;
+        c=a-b;
+        return c;
+    }
+    function View_2(uint a,uint b) public pure returns(uint){
+        uint c;
+        c=a*b;
+        return c;
+    }
+    function View_3(uint a,uint b) public pure returns(uint){
+        uint c;
+        c=a/b;
+        return c;
+    }
+}
+10)Attendence Register
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+
+contract AttedenceRegister{
+    
+    uint date;
+    uint256 rollnum;
+
+    struct Student{
+        uint256 rollno;
+        string name;
+        uint8 class;
+        uint datenow;
+    }
+
+    address Teacher = msg.sender;
+
+    event Register(address Teacher, Student Data, string);
+
+    modifier onlyTeacher() {
+        require(Teacher == msg.sender, "You are not a teacher");
+        _;
+    }
+
+    mapping ( uint256 => Student) public StudentData;
+
+    function addStudent(uint256 _rollnum, string memory _name, uint8 _class) public {
+        date = block.timestamp;
+        StudentData[_rollnum] = Student(_rollnum, _name, _class, date);
+        emit Register(msg.sender, StudentData[_rollnum], "Add Successfully");
+    }
+}
+5)Write a contract 'Time' which implements a function named get Time
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+contract Time{
+    function GetTime(uint sec)public view returns(uint){
+        //check timestamp with current time
+        if(sec>block.timestamp){
+            return sec+4830;
+        }
+        else {
+            return 0;
+        }
+    }
+3)Implementing decentralised voting system for 3 candidates, each voter can vote twice
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+
+contract ElectionTwice {
+
+//Initia;;y Struct of candidate will be created 
+struct Candidate{
+
+    uint id;
+    string candidateName;
+    uint voteCount;
+
+}
+
+mapping (address=>uint) public voters;
+
+
+
+//0 , 1 =
+mapping (uint=> Candidate)public candidates; //map called candidate is created which can hold unit type
+
+uint public candidatesCount;
+
+function addCandidate(string memory _name) private {
+
+    candidatesCount++;
+
+    candidates[candidatesCount]=Candidate(candidatesCount,_name,0);
+    
+}
+
+constructor() {
+    
+    addCandidate("Donald Trump");
+    addCandidate("Joe Baiden");
+    addCandidate("Barack obama");
+
+}
+
+event consolePrint( string, address);
+
+function vote(uint _candidateId) public{
+
+    //Allowing Voter to vote twice
+
+    //Check the voter vote counts
+    require(voters[msg.sender] <2); //msg.sender => person who has initiated smart contract
+
+    require(_candidateId>0 && _candidateId<=candidatesCount); //correct set of candidates
+
+
+    emit consolePrint("value of sender is ",msg.sender);
+
+    //Voter vote increementation
+    voters[msg.sender] += 1;
+
+    candidates[_candidateId].voteCount++;
+
+}
+
+}
+4)Palindrome Program : to write a code to return palindrome of a string, if it is palindrome transfer 50 ETH from one account to manager account.
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+
+contract Palindrome{
+
+    string name;
+
+    //address payable Manager = payable(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
+
+    function Reverse(string calldata _name) external pure returns (string memory,bool){
+
+        bytes memory _baseBytes = bytes(_name);
+
+        //check if the string length is not zero, if it's zero then execution terminates
+        assert(_baseBytes.length > 0);
+
+        string memory _tempValue = new string(_baseBytes.length);
+
+        bytes memory _newValue = bytes(_tempValue);
+
+        //reversing a string
+        for(uint i = 0; i < _baseBytes.length; i++){
+
+            _newValue[_baseBytes.length - i -1] = _baseBytes[i];
+
+        }
+        
+        //Comparing original string with newvalue
+        if( keccak256(abi.encodePacked(_name)) == keccak256(abi.encodePacked(_newValue)) ){
+
+            //send ether
+            //Manager.transfer(50 ether);
+            return (string(_newValue),true);
+            
+
+        }
+        else{
+
+            return (string(_newValue),false);
+
+        }
+
+    }
+
+}
+
+
