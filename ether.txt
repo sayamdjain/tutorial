@@ -1,0 +1,66 @@
+pragma solidity ^0.8.13;
+
+contract ICO {
+
+    address owner;
+
+    uint totalNumofToken;
+
+    string name = "Sakha";
+
+    string symbol = "SA";
+
+    uint64 public Tokenprice = 1 ether;
+
+    mapping(address=>uint) balances;
+
+
+    constructor(uint _total) {
+
+        totalNumofToken = _total;
+
+        balances[msg.sender] = _total;
+
+        owner = msg.sender;
+
+    }
+
+    modifier onlyBuyers{
+        require(owner != msg.sender," Owner isNot Buyer ");
+        _;
+    }
+
+
+    function BuyEthEquivalentNumOfTokens() external payable onlyBuyers {
+
+        uint tokens = (msg.value / Tokenprice);
+
+        require(msg.value != 0," Value can't be Zero ");
+
+        require(balances[owner] > tokens, " Tokens are unavailable");
+
+        balances[owner] = balances[owner] - tokens;
+
+        balances[msg.sender] = balances[msg.sender] + tokens;
+
+    }
+
+    function BuyAndTransferTokens(uint tokens) external payable onlyBuyers {
+
+        require(msg.value == (Tokenprice * tokens), " Low Funds ");
+
+        require(balances[owner] > tokens, " Tokens are unavailable");
+
+        balances[owner] = balances[owner] - tokens;
+
+        balances[msg.sender] = balances[msg.sender] + tokens;
+
+    }
+
+    function getBalance(address someone) public view returns (uint) {
+
+        return balances[someone];
+
+    }
+    
+}
