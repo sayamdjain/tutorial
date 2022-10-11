@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>My First dApp</title>
+        <style>
+            body {
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            div {
+                width: 20%;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+            }
+            button {
+                width: 100%;
+                margin: 10px 0px 5px 0px;
+            }
+        </style>
+    </head>
+    <body>
+ 
+ 
+        <div>   <h1>wallet</h1>
+ 
+            <h3>Do transfer</h3>
+ 
+            <button onclick="aCount()">get the counts</button>
+ 
+            <label for="a">transact</label>
+            <input type="text" id="a"/>
+            <input type="text" id="v">
+            <input type="text" id="d"/>
+            <button onclick="submit()">Submit</button><br/
+ 
+            <label for="tiD">enter id</label> 
+            <input type="text" id="tiD"/>
+            <button onclick="App()">Approve</button> <br/>
+ 
+ 
+        </div>
+ 
+    </body>
+ 
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.1/ethers.umd.js"
+        type="application/javascript"
+    ></script>
+ 
+    <script>
+ 
+        let MultiSigWalletContract;
+ 
+        let signer;
+ 
+        let provider;
+ 
+        let accounts;
+ 
+        let MultiSigWalletContractABI;
+ 
+        let MultiSigWalletContractAddress;
+ 
+ 
+        // doInit();
+ 
+async function SUbmit() {
+         var adr = document.getElementById("a").value;
+         const val = document.getElementById("v").value;
+         var data = document.getElementById("d").value;
+         await MultiSigWalletContract.submitTransaction(adr,val,data);
+        }
+ 
+        async function aCount() {
+            const price = await MultiSigWalletContract.approvalcount();
+            console.log(price.toString());
+			      alert("Number of Owner Approvals needed is: "+price.toString);
+        }
+ 
+        async function App() {
+          const amount = document.getElementById("tiD").value;
+          await MultiSigWalletContract.approveTransaction(amount);
+        }
+ 
+ 
+ 
+        async function doInitMetamask() {
+            MultiSigWalletContractAddress = "0xD711817192CEF68CF171d4a5dE71dca824acF23D";
+            MultiSigWalletContractABI = [
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "_owners",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint8",
+          "name": "count",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "approvalcount",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "ownerApprovals",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "transactions",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "executed",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint8",
+          "name": "approvals",
+          "type": "uint8"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive",
+      "payable": true
+    },
+    {
+      "inputs": [],
+      "name": "getOwners",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "submitTransaction",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tID",
+          "type": "uint256"
+        }
+      ],
+      "name": "approveTransaction",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tID",
+          "type": "uint256"
+        }
+      ],
+      "name": "executeTransaction",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tID",
+          "type": "uint256"
+        }
+      ],
+      "name": "revertApproval",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+ 
+            provider = new ethers.providers.Web3Provider(web3.currentProvider);
+ 
+            // try {
+            //     await provider.send("eth_requestAccounts", []);
+            // } catch {
+            //     console.log("Connection error");
+            // }
+ 
+            accounts = await provider.listAccounts();
+            console.log(accounts);
+ 
+            signer = await provider.getSigner(accounts[0]);
+            console.log(signer);
+ 
+            console.log(MultiSigWalletContractAddress);
+            console.log(MultiSigWalletContractABI);
+ 
+            MultiSigWalletContract = new ethers.Contract( MultiSigWalletContractAddress, MultiSigWalletContractABI, signer);
+        }
+        doInitMetamask();
+    </script>
+</html>
