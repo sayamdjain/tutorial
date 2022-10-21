@@ -23,271 +23,196 @@
         </style>
     </head>
     <body>
- 
- 
-        <div>   <h1>wallet</h1>
- 
-            <h3>Do transfer</h3>
- 
-            <button onclick="aCount()">get the counts</button>
- 
-            <label for="a">transact</label>
-            <input type="text" id="a"/>
-            <input type="text" id="v">
-            <input type="text" id="d"/>
-            <button onclick="submit()">Submit</button><br/
- 
-            <label for="tiD">enter id</label> 
-            <input type="text" id="tiD"/>
-            <button onclick="App()">Approve</button> <br/>
- 
- 
+        <div>
+            <h1>Buyer Zone</h1>
+            <p>Add product details</p>
+            <button onclick="addproductdetails()">Add product</button>
+            <p>get product details</p>
+            <button onclick="getproductdetails()">Get product</button>
+            <p>buy the best product and delivered to home </p>
+            <button onclick="getPrice()">Get Price</button>
+            <label for="currentPrice" id="currentPrice"> </label> <br />
+            <label for="purchaseAmount">enter the price amount:</label> 
+            <input type="text" id="purchaseAmount" />
+            <button onclick="buy()">Buy</button>
         </div>
- 
     </body>
- 
-    <script
+     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.1/ethers.umd.js"
         type="application/javascript"
     ></script>
- 
+
     <script>
- 
-        let MultiSigWalletContract;
- 
+        
+        
+        let SellerContract;
+      
         let signer;
- 
         let provider;
- 
         let accounts;
+        let SellerContractABI;
+        
+        let SellerContractAddress;
+        
+        
+        async function add() {
+  const name = document.getElementById("name").value;
+  const pp = document.getElementById("pp").value;
+  const desc = document.getElementById("desc").value;
+  console.log(await Seller.addProduct(name,desc,pp));
+  alert("Products added successfully.");
  
-        let MultiSigWalletContractABI;
+}
  
-        let MultiSigWalletContractAddress;
+async function requestQuote() {
+  const PID = document.getElementById("pid").value;
+  await Seller.requestQuote(PID);
  
- 
-        // doInit();
- 
-async function SUbmit() {
-         var adr = document.getElementById("a").value;
-         const val = document.getElementById("v").value;
-         var data = document.getElementById("d").value;
-         await MultiSigWalletContract.submitTransaction(adr,val,data);
-        }
- 
-        async function aCount() {
-            const price = await MultiSigWalletContract.approvalcount();
+}
+
+        async function getPrice() {
+            const price = await SellerContract.pricePerEth();
             console.log(price.toString());
-			      alert("Number of Owner Approvals needed is: "+price.toString);
+			alert(price.toString);
+            document.getElementById("PIDCount").setAttribute('value',price.toString()) ;
         }
- 
-        async function App() {
-          const amount = document.getElementById("tiD").value;
-          await MultiSigWalletContract.approveTransaction(amount);
+
+        async function buy() {
+            signer = await provider.getSigner(accounts[1]);
+            console.log(signer);
+            BuyerContract = new ethers.Contract( BuyerContractAddress, BuyerContractABI, signer);
+            const amount = document.getElementById("PIDCount").value;
+            let bigAmount = ethers.BigNumber.from(amount).mul(ethers.BigNumber.from("1000000000000000000"));
+            await Buyer.buy({value: bigAmount});
         }
- 
- 
- 
+
         async function doInitMetamask() {
-            MultiSigWalletContractAddress = "0xD711817192CEF68CF171d4a5dE71dca824acF23D";
-            MultiSigWalletContractABI = [
-    {
-      "inputs": [
-        {
-          "internalType": "address[]",
-          "name": "_owners",
-          "type": "address[]"
-        },
-        {
-          "internalType": "uint8",
-          "name": "count",
-          "type": "uint8"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [],
-      "name": "approvalcount",
-      "outputs": [
-        {
-          "internalType": "uint8",
-          "name": "",
-          "type": "uint8"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "ownerApprovals",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "transactions",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "executed",
-          "type": "bool"
-        },
-        {
-          "internalType": "uint8",
-          "name": "approvals",
-          "type": "uint8"
-        },
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bytes",
-          "name": "data",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "stateMutability": "payable",
-      "type": "receive",
-      "payable": true
-    },
-    {
-      "inputs": [],
-      "name": "getOwners",
-      "outputs": [
-        {
-          "internalType": "address[]",
-          "name": "",
-          "type": "address[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bytes",
-          "name": "data",
-          "type": "bytes"
-        }
-      ],
-      "name": "submitTransaction",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tID",
-          "type": "uint256"
-        }
-      ],
-      "name": "approveTransaction",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tID",
-          "type": "uint256"
-        }
-      ],
-      "name": "executeTransaction",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tID",
-          "type": "uint256"
-        }
-      ],
-      "name": "revertApproval",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
-  ]
- 
+            SellerContractAddress = '0xD1DC832c19dfd0194e4604B9333d954788A84dAc';
+            
+            SellerContractABI = [
+  {
+    inputs: [ [Object] ],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+    constant: undefined,
+    payable: undefined
+  },
+  {
+    inputs: [ [Object] ],
+    name: 'Ods',
+    outputs: [
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object]
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    payable: undefined,
+    signature: '0xc282a3b5'
+  },
+  {
+    inputs: [ [Object] ],
+    name: 'Prods',
+    outputs: [
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object],
+      [Object]
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    payable: undefined,
+    signature: '0x472d221c'
+  },
+  {
+    inputs: [ [Object], [Object], [Object], [Object] ],
+    name: 'addp',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+    constant: undefined,
+    payable: undefined,
+    signature: '0x1919af14'
+  },
+  {
+    inputs: [ [Object] ],
+    name: 'reqQuote',
+    outputs: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    payable: undefined,
+    signature: '0x4c9b6c34'
+  },
+  {
+    inputs: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+    name: 'Buy',
+    outputs: [ [Object], [Object] ],
+    stateMutability: 'payable',
+    type: 'function',
+    constant: undefined,
+    payable: true,
+    signature: '0x40ef9c81'
+  },
+  {
+    inputs: [ [Object] ],
+    name: 'fv',
+    outputs: [ [Object], [Object], [Object], [Object], [Object] ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    payable: undefined,
+    signature: '0xac23a743'
+  },
+  {
+    inputs: [ [Object] ],
+    name: 'giveAway',
+    outputs: [ [Object] ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+    constant: undefined,
+    payable: undefined,
+    signature: '0x2d4b2986'
+  },
+  {
+    inputs: [ [Object] ],
+    name: 'packedOrder',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+    constant: undefined,
+    payable: undefined,
+    signature: '0x703eaa22'
+  }
+]
+
+
+
             provider = new ethers.providers.Web3Provider(web3.currentProvider);
- 
-            // try {
-            //     await provider.send("eth_requestAccounts", []);
-            // } catch {
-            //     console.log("Connection error");
-            // }
- 
+
+            try {
+                await provider.send("eth_requestAccounts", []);
+            } catch {
+                console.log("Connection error");
+            }
+
             accounts = await provider.listAccounts();
             console.log(accounts);
- 
+            
             signer = await provider.getSigner(accounts[0]);
             console.log(signer);
- 
-            console.log(MultiSigWalletContractAddress);
-            console.log(MultiSigWalletContractABI);
- 
-            MultiSigWalletContract = new ethers.Contract( MultiSigWalletContractAddress, MultiSigWalletContractABI, signer);
+
+            console.log(SellerContractAddress);
+            console.log(SellerContractABI);
+            
+            
+            SellerContract = new ethers.Contract( SellerContractAddress, SellerContractABI, signer);
         }
         doInitMetamask();
     </script>
-</html>
+   
+   
+</html> 
